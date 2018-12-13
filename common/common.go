@@ -1,0 +1,6 @@
+package common
+
+const (
+	AUTH_CONTEXT_KEY   = "AUTH_CONTEXT_KEY"
+	HEADER_TOTAL_COUNT = "X-TOTAL-COUNT"
+)
