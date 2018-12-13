@@ -43,6 +43,7 @@ func createGinEngine() *gin.Engine {
 	{
 		v1.POST("/register", ginerr.CreateGinController(controller.Register))
 		v1.POST("/login", ginerr.CreateGinController(controller.Login))
+		v1.GET("/page", controller.Book)
 	}
 
 	auth := v1.Group("", middleware.Auth)
