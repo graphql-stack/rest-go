@@ -13,6 +13,16 @@ import (
 	"net/http"
 )
 
+// Register is handler for /register
+// @Summary Register a new user
+// @Description Register a new user
+// @Accept  json
+// @Produce  json
+// @Param   user     body    common.RegisterForm     true        "Register user"
+// @Success 201 {object} model.Token
+// @Failure 400 {object} common.ErrResp
+// @Failure 500 "StatusInternalServerError"
+// @Router /register [post]
 func Register(c *gin.Context) ginerr.ApiError {
 	var f common.RegisterForm
 	err := c.ShouldBindJSON(&f)
@@ -75,6 +85,16 @@ func Login(c *gin.Context) ginerr.ApiError {
 	return nil
 }
 
+// Me get login user message
+// @Summary Me message
+// @Description
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} model.User
+// @Failure 401 {object} common.ErrResp
+// @Failure 500 "StatusInternalServerError"
+// @Security ApiKeyAuth
+// @Router /me [get]
 func Me(c *gin.Context) {
 	v, _ := c.Get(common.AUTH_CONTEXT_KEY)
 	vv, ok := v.(*model.User)

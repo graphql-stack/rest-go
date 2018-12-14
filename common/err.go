@@ -22,3 +22,8 @@ var TOKEN_ERROR = map[string]string{"code": "TOKEN_ERR_OR_EXPIRED", "message": "
 var (
 	ErrExpired = errors.New("TOKEN_EXPIRED")
 )
+
+type ErrResp struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
+}
