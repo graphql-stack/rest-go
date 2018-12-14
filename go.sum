@@ -1,7 +1,11 @@
 cloud.google.com/go v0.33.1 h1:fmJQWZ1w9PGkHR1YL/P7HloDvqlmKQ4Vpb7PC2e+aCk=
 cloud.google.com/go v0.33.1/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+github.com/Pallinder/go-randomdata v1.1.0 h1:gUubB1IEUliFmzjqjhf+bgkg1o6uoFIkRsP3VrhEcx8=
+github.com/Pallinder/go-randomdata v1.1.0/go.mod h1:yHmJgulpD2Nfrm0cR9tI/+oAgRqCQQixsA8HyRZfV9Y=
 github.com/VividCortex/mysqlerr v0.0.0-20170204212430-6c6b55f8796f h1:HR5nRmUQgXrwqZOwZ2DAc/aCi3Bu3xENpspW935vxu0=
 github.com/VividCortex/mysqlerr v0.0.0-20170204212430-6c6b55f8796f/go.mod h1:f3HiCrHjHBdcm6E83vGaXh1KomZMA2P6aeo3hKx/wg0=
+github.com/bluele/factory-go v0.0.0-20181130035244-e6e8633dd3fe h1:hcoC5+O/CQZmIcE29I4dLy/m6VXWcbHvlwl4E1g5mFM=
+github.com/bluele/factory-go v0.0.0-20181130035244-e6e8633dd3fe/go.mod h1:C+/xfXxCR66wsm6I3Mzbf72W/Lz2NPsGQhSWDVBa5YU=
 github.com/codehack/scrypto v0.0.0-20151016065608-927801707fa1 h1:uIJFhnm9hcoa9Cll79mYpydTVFDH1vUGOhRxpE9BxNA=
 github.com/codehack/scrypto v0.0.0-20151016065608-927801707fa1/go.mod h1:+VWGakRINF/M0dLdPSxjKLP6beC9VF1q894p4Pne/Lo=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=

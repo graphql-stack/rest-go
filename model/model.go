@@ -28,7 +28,7 @@ func (u *User) Save() error {
 
 type Token struct {
 	gorm.Model `json:"-"`
-	User       User   `json:"-"`
+	User       *User  `json:"-"`
 	UserID     uint   `json:"-"`
 	Token      string `json:"token" gorm:"type:varchar(100);index;not null"`
 }

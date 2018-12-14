@@ -25,5 +25,5 @@ func GetUserByToken(tk string) (*model.User, error) {
 	if token.IsExpired() {
 		return nil, common.ErrExpired
 	}
-	return &token.User, err
+	return token.User, err
 }

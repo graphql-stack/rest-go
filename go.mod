@@ -1,7 +1,9 @@
 module github.com/zcong1993/rest-go
 
 require (
+	github.com/Pallinder/go-randomdata v1.1.0
 	github.com/VividCortex/mysqlerr v0.0.0-20170204212430-6c6b55f8796f
+	github.com/bluele/factory-go v0.0.0-20181130035244-e6e8633dd3fe
 	github.com/gin-contrib/cors v0.0.0-20181206035131-7c641a7a7dc5
 	github.com/gin-gonic/gin v1.3.0
 	github.com/go-sql-driver/mysql v1.4.1
