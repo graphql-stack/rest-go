@@ -18,4 +18,10 @@ var (
 	TokenFactory = factory.NewFactory(&Token{}).Attr("Token", func(args factory.Args) (i interface{}, e error) {
 		return utils.GenerateToken(), nil
 	}).SubFactory("User", UserFactory)
+
+	BookFactory = factory.NewFactory(&Book{}).Attr("Title", func(args factory.Args) (i interface{}, e error) {
+		return randomdata.Title(randomdata.RandomGender), nil
+	}).Attr("Price", func(args factory.Args) (i interface{}, e error) {
+		return float64(randomdata.Number(100)), nil
+	}).SubFactory("Author", UserFactory)
 )

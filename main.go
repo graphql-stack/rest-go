@@ -20,6 +20,7 @@ func init() {
 	mysql.InitDB(func(db *gorm.DB) {
 		db.AutoMigrate(new(model.User))
 		db.AutoMigrate(new(model.Token))
+		db.AutoMigrate(new(model.Book))
 	})
 }
 
@@ -53,8 +54,12 @@ func createGinEngine() *gin.Engine {
 	{
 		v1.POST("/register", ginerr.CreateGinController(controller.Register))
 		v1.POST("/login", ginerr.CreateGinController(controller.Login))
-		v1.GET("/page", controller.Book)
 		v1.GET("/p", controller.Test)
+	}
+
+	{
+		v1.GET("/books", controller.BooksAll)
+		v1.GET("/books/:id", controller.BooksGet)
 	}
 
 	auth := v1.Group("", middleware.Auth)
