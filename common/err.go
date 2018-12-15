@@ -2,7 +2,7 @@ package common
 
 import (
 	"errors"
-	"github.com/zcong1993/libgo/gin"
+	"github.com/zcong1993/libgo/gin/ginerr"
 	"net/http"
 )
 

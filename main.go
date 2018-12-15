@@ -6,7 +6,8 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
-	"github.com/zcong1993/libgo/gin"
+	"github.com/zcong1993/libgo/gin/ginerr"
+	"github.com/zcong1993/libgo/gin/ginhelper"
 	"github.com/zcong1993/rest-go/common"
 	"github.com/zcong1993/rest-go/controller"
 	_ "github.com/zcong1993/rest-go/docs"
@@ -55,11 +56,13 @@ func createGinEngine() *gin.Engine {
 		v1.POST("/register", ginerr.CreateGinController(controller.Register))
 		v1.POST("/login", ginerr.CreateGinController(controller.Login))
 		v1.GET("/p", controller.Test)
+		v1.GET("/users/:id", controller.UsersGet)
 	}
 
 	{
-		v1.GET("/books", controller.BooksAll)
-		v1.GET("/books/:id", controller.BooksGet)
+		ginhelper.BindRouter(v1, "/books", &controller.BookRest{})
+		//v1.GET("/books", controller.BooksAll)
+		//v1.GET("/books/:id", controller.BooksGet)
 	}
 
 	auth := v1.Group("", middleware.Auth)

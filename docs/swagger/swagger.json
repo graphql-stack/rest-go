@@ -203,6 +203,38 @@
                     }
                 }
             }
+        },
+        "/users/{id}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Users query by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/model.User"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -220,8 +252,8 @@
         "common.RegisterForm": {
             "type": "object",
             "required": [
-                "password",
-                "email"
+                "email",
+                "password"
             ],
             "properties": {
                 "email": {

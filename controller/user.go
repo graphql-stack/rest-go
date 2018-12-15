@@ -4,7 +4,9 @@ import (
 	"github.com/VividCortex/mysqlerr"
 	"github.com/gin-gonic/gin"
 	"github.com/go-sql-driver/mysql"
-	"github.com/zcong1993/libgo/gin"
+	"github.com/jinzhu/gorm"
+	"github.com/zcong1993/libgo/gin/ginerr"
+	"github.com/zcong1993/libgo/gin/ginhelper"
 	"github.com/zcong1993/libgo/utils"
 	"github.com/zcong1993/rest-go/common"
 	"github.com/zcong1993/rest-go/model"
@@ -104,4 +106,30 @@ func Me(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, vv)
+}
+
+// Users query by id for /users/:id
+// @Summary Users query by id
+// @Description
+// @Accept  json
+// @Produce  json
+// @Param   id  path  string  true  "User id"
+// @Success 200 {object} model.User
+// @Failure 500 "StatusInternalServerError"
+// @Router /users/{id} [get]
+func UsersGet(c *gin.Context) {
+	id := c.Param("id")
+	var user model.User
+	err := mysql2.DB.First(&user, "id = ?", id).Error
+
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			c.Status(http.StatusNotFound)
+			return
+		}
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+	ginhelper.WithCacheControl(c, common.LONG_CACHE_DURATION)
+	c.JSON(http.StatusOK, user)
 }

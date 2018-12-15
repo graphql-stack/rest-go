@@ -16,8 +16,8 @@ definitions:
       username:
         type: string
     required:
-    - password
     - email
+    - password
     type: object
   model.Book:
     properties:
@@ -195,6 +195,27 @@ paths:
         "500":
           description: StatusInternalServerError
       summary: Register a new user
+  /users/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: User id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+            type: object
+        "500":
+          description: StatusInternalServerError
+      summary: Users query by id
 securityDefinitions:
   ApiKeyAuth:
     in: header

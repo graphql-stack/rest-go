@@ -3,13 +3,13 @@ package utils
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
-	"github.com/zcong1993/libgo/gin"
+	"github.com/zcong1993/libgo/gin/ginhelper"
 	"github.com/zcong1993/libgo/utils"
 	"github.com/zcong1993/rest-go/common"
 	"net/http"
 )
 
-var DefaultPaginator = &ginerr.OffsetLimitPaginator{DefaultNumPerPage: 100}
+var DefaultPaginator = &ginhelper.OffsetLimitPaginator{DefaultNumPerPage: 100}
 
 func ResponsePagination(ctx *gin.Context, count int, data interface{}) {
 	ctx.Header(common.HEADER_TOTAL_COUNT, utils.Num2String(count))
