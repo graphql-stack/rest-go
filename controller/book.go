@@ -62,8 +62,8 @@ func (b *BookView) GetSerializer() interface{} {
 // @Success 200 {array} model.Book
 // @Failure 500 "StatusInternalServerError"
 // @Router /books [get]
-func (b *BookView) List(ctx *gin.Context, restView ginhelper.IRestView) {
-	b.Rest.List(ctx, restView)
+func DocsBookList() {
+
 }
 
 // Books query by id for /books/:id
@@ -75,6 +75,6 @@ func (b *BookView) List(ctx *gin.Context, restView ginhelper.IRestView) {
 // @Success 200 {object} model.Book
 // @Failure 500 "StatusInternalServerError"
 // @Router /books/{id} [get]
-func (b *BookView) Retrieve(ctx *gin.Context, restView ginhelper.IRestView, id string) {
-	b.Rest.Retrieve(ctx, restView, id)
+func DocsBookRetrieve() {
+
 }

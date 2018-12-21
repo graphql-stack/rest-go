@@ -4,6 +4,8 @@ definitions:
     properties:
       code:
         type: string
+      errors:
+        type: object
       message:
         type: string
     type: object
@@ -16,8 +18,8 @@ definitions:
       username:
         type: string
     required:
-    - email
     - password
+    - email
     type: object
   model.Book:
     properties:

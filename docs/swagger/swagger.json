@@ -244,6 +244,9 @@
                 "code": {
                     "type": "string"
                 },
+                "errors": {
+                    "type": "object"
+                },
                 "message": {
                     "type": "string"
                 }
@@ -252,8 +255,8 @@
         "common.RegisterForm": {
             "type": "object",
             "required": [
-                "email",
-                "password"
+                "password",
+                "email"
             ],
             "properties": {
                 "email": {
