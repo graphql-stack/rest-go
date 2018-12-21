@@ -6,15 +6,14 @@ import (
 	"net/http"
 )
 
-func createErr(statusCode int, code string) ginerr.ApiError {
-	return ginerr.NewDefaultError(statusCode, code, code)
+func createErr(statusCode int, code string, errors interface{}) ginerr.ApiError {
+	return ginerr.NewDefaultError(statusCode, code, code, errors)
 }
 
 var (
-	DUPLICATE_USER               = ginerr.NewDefaultError(http.StatusBadRequest, "DUPLICATE_USER", "DUPLICATE_USER")
-	INTERVAL_ERROR               = ginerr.NewDefaultError(http.StatusInternalServerError, "", "")
-	INVALID_PARAMS               = ginerr.NewDefaultError(http.StatusBadRequest, "INVALID_PARAMS", "INVALID_PARAMS")
-	INVALID_USERNAME_OR_PASSWORD = createErr(http.StatusUnauthorized, "INVALID_USERNAME_OR_PASSWORD")
+	DUPLICATE_USER               = ginerr.NewDefaultError(http.StatusBadRequest, "DUPLICATE_USER", "DUPLICATE_USER", nil)
+	INTERVAL_ERROR               = ginerr.NewDefaultError(http.StatusInternalServerError, "", "", nil)
+	INVALID_USERNAME_OR_PASSWORD = createErr(http.StatusUnauthorized, "INVALID_USERNAME_OR_PASSWORD", nil)
 )
 
 var TOKEN_ERROR = map[string]string{"code": "TOKEN_ERR_OR_EXPIRED", "message": "TOKEN_ERR_OR_EXPIRED"}
@@ -24,6 +23,11 @@ var (
 )
 
 type ErrResp struct {
-	Code    string `json:"code"`
-	Message string `json:"message"`
+	Code    string      `json:"code"`
+	Message string      `json:"message"`
+	Errors  interface{} `json:"errors"`
+}
+
+func CreateInvalidErr(errors interface{}) ginerr.ApiError {
+	return ginerr.NewDefaultError(http.StatusBadRequest, "INVALID_PARAMS", "INVALID_PARAMS", errors)
 }

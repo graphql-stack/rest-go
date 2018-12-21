@@ -8,6 +8,7 @@ import (
 	"github.com/zcong1993/libgo/gin/ginerr"
 	"github.com/zcong1993/libgo/gin/ginhelper"
 	"github.com/zcong1993/libgo/utils"
+	"github.com/zcong1993/libgo/validator"
 	"github.com/zcong1993/rest-go/common"
 	"github.com/zcong1993/rest-go/model"
 	mysql2 "github.com/zcong1993/rest-go/mysql"
@@ -29,7 +30,7 @@ func Register(c *gin.Context) ginerr.ApiError {
 	var f common.RegisterForm
 	err := c.ShouldBindJSON(&f)
 	if err != nil {
-		return common.INVALID_PARAMS
+		return common.CreateInvalidErr(validator.NormalizeErr(err))
 	}
 
 	u := &model.User{
@@ -60,7 +61,7 @@ func Login(c *gin.Context) ginerr.ApiError {
 	var f common.LoginForm
 	err := c.ShouldBindJSON(&f)
 	if err != nil {
-		return common.INVALID_PARAMS
+		return common.CreateInvalidErr(validator.NormalizeErr(err))
 	}
 	var u model.User
 	err = mysql2.DB.First(&u, "email=?", f.Email).Error
