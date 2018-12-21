@@ -17,7 +17,7 @@ require (
 	github.com/swaggo/swag v1.4.0
 	github.com/ugorji/go/codec v0.0.0-20181209151446-772ced7fd4c2 // indirect
 	github.com/urfave/cli v1.20.0 // indirect
-	github.com/zcong1993/libgo v0.0.0-20181220025137-9aca26697c55
+	github.com/zcong1993/libgo v0.0.0-20181221082215-7d0e5ac960bd
 	golang.org/x/tools v0.0.0-20181213210126-fe2443f7b950 // indirect
 	gopkg.in/yaml.v2 v2.2.2 // indirect
 )

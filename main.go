@@ -3,11 +3,13 @@ package main
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"github.com/jinzhu/gorm"
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"github.com/zcong1993/libgo/gin/ginerr"
 	"github.com/zcong1993/libgo/gin/ginhelper"
+	"github.com/zcong1993/libgo/validator"
 	"github.com/zcong1993/rest-go/common"
 	"github.com/zcong1993/rest-go/controller"
 	_ "github.com/zcong1993/rest-go/docs"
@@ -37,6 +39,8 @@ func corsConfig() cors.Config {
 
 func createGinEngine() *gin.Engine {
 	r := gin.Default()
+
+	binding.Validator = new(validator.DefaultValidator)
 
 	r.Use(cors.New(corsConfig()))
 
