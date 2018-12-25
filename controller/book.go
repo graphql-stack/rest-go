@@ -43,12 +43,11 @@ func (b *BookView) GetQuerySet() *gorm.DB {
 	return mysql.DB.Model(new(model.Book))
 }
 
-func (b *BookView) GetSerializers() interface{} {
-	var book []model.Book
-	return &book
-}
-
-func (b *BookView) GetSerializer() interface{} {
+func (b *BookView) GetModel(isMany bool) interface{} {
+	if isMany {
+		var book []model.Book
+		return &book
+	}
 	return &model.Book{}
 }
 
