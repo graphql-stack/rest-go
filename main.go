@@ -65,6 +65,7 @@ func createGinEngine() *gin.Engine {
 
 	{
 		ginhelper.BindRouter(v1, "/books", &controller.BookView{}, &controller.BookView{}, ginhelper.ReadOnly...)
+		v1.GET("/books_batch", controller.BookBatch)
 		//v1.GET("/books", controller.BooksAll)
 		//v1.GET("/books/:id", controller.BooksGet)
 	}

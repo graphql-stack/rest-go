@@ -4,6 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/zcong1993/libgo/gin/ginhelper"
+	"github.com/zcong1993/libgo/reflect"
+	utils2 "github.com/zcong1993/libgo/utils"
 	"github.com/zcong1993/rest-go/model"
 	"github.com/zcong1993/rest-go/mysql"
 	"github.com/zcong1993/rest-go/utils"
@@ -76,4 +78,38 @@ func DocsBookList() {
 // @Router /books/{id} [get]
 func DocsBookRetrieve() {
 
+}
+
+func BookBatch(ctx *gin.Context) {
+	batchIds := ctx.Query("ids")
+	if batchIds == "" {
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+	ids, ok := ginhelper.NormalizeBatchQuery(batchIds)
+	if !ok {
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+
+	var books []model.Book
+	err := mysql.DB.Where("id in (?)", ids).Find(&books).Error
+	if err != nil {
+		ctx.Status(http.StatusInternalServerError)
+		return
+	}
+
+	dataMap := reflecthelper.Slice2Map(books, "ID")
+	res := make(map[string]interface{}, len(ids))
+
+	for _, id := range ids {
+		b, ok := dataMap[uint(utils2.Str2uint64(id))]
+		if !ok {
+			res[id] = nil
+			continue
+		}
+		res[id] = b
+	}
+
+	ctx.JSON(http.StatusOK, res)
 }
