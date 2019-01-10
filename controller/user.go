@@ -140,6 +140,15 @@ func userToDataLoaderResp(keys []string, data []model.User) []*model.User {
 	return resp
 }
 
+// Posts query all for /posts
+// @Summary Posts pagination query all
+// @Description
+// @Accept  json
+// @Produce  json
+// @Param   ids query string true "search by ids"
+// @Success 200 {array} model.User
+// @Failure 500 "StatusInternalServerError"
+// @Router /users_batch [get]
 func UsersBatch(ctx *gin.Context) {
 	batchIds := ctx.Query("ids")
 	if batchIds == "" {

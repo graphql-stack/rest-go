@@ -36,8 +36,8 @@ definitions:
       title:
         type: string
     required:
-    - title
     - content
+    - title
     type: object
   common.RegisterForm:
     properties:
@@ -352,6 +352,28 @@ paths:
         "500":
           description: StatusInternalServerError
       summary: Register a new user
+  /users_batch:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: search by ids
+        in: query
+        name: ids
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.User'
+            type: array
+        "500":
+          description: StatusInternalServerError
+      summary: Posts pagination query all
 securityDefinitions:
   ApiKeyAuth:
     in: header

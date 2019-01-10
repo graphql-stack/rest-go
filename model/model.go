@@ -13,10 +13,10 @@ var (
 )
 
 type Model struct {
-	ID        string `gorm:"primary_key;type:uuid;default:uuid_generate_v4()"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt *time.Time `sql:"index"`
+	ID        string     `json:"id" gorm:"primary_key;type:uuid;default:uuid_generate_v4()"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"-"`
+	DeletedAt *time.Time `json:"-" sql:"index"`
 }
 
 type User struct {

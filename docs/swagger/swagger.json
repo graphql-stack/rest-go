@@ -346,6 +346,40 @@
                     }
                 }
             }
+        },
+        "/users_batch": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Posts pagination query all",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "search by ids",
+                        "name": "ids",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.User"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -396,8 +430,8 @@
         "common.PostInput": {
             "type": "object",
             "required": [
-                "title",
-                "content"
+                "content",
+                "title"
             ],
             "properties": {
                 "content": {

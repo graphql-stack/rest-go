@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/secure"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/swaggo/gin-swagger"
@@ -41,6 +42,9 @@ func createGinEngine() *gin.Engine {
 		r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 		r.Static("/public", "./.public")
 		r.Static("/docs", "./docs/swagger")
+	} else {
+		// production
+		r.Use(secure.New(secure.DefaultConfig()))
 	}
 
 	v1 := r.Group("/v1")
