@@ -16,6 +16,8 @@ func InitDB(fns ...func(db *gorm.DB)) {
 		log.Fatal(err)
 	}
 
+	db.DB().SetMaxIdleConns(50)
+
 	for _, fn := range fns {
 		fn(db)
 	}
