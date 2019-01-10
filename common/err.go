@@ -14,6 +14,8 @@ var (
 	DUPLICATE_USER               = ginerr.NewDefaultError(http.StatusBadRequest, "DUPLICATE_USER", "DUPLICATE_USER", nil)
 	INTERVAL_ERROR               = ginerr.NewDefaultError(http.StatusInternalServerError, "", "", nil)
 	INVALID_USERNAME_OR_PASSWORD = createErr(http.StatusUnauthorized, "INVALID_USERNAME_OR_PASSWORD", nil)
+	NOT_FOUND_ERROR              = createErr(http.StatusNotFound, "NOT_FOUND", nil)
+	NOT_UUID                     = createErr(http.StatusBadRequest, "NOT_A_UUID", nil)
 )
 
 var TOKEN_ERROR = map[string]string{"code": "TOKEN_ERR_OR_EXPIRED", "message": "TOKEN_ERR_OR_EXPIRED"}

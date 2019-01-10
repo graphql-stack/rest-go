@@ -48,22 +48,20 @@ func createGinEngine() *gin.Engine {
 	{
 		v1.POST("/register", ginerr.CreateGinController(controller.Register))
 		v1.POST("/login", ginerr.CreateGinController(controller.Login))
-		v1.GET("/p", controller.Test)
-		v1.GET("/users/:id", controller.UsersGet)
 		v1.GET("/users_batch", controller.UsersBatch)
 	}
 
 	{
-		ginhelper.BindRouter(v1, "/books", &controller.BookView{}, &controller.BookView{}, ginhelper.ReadOnly...)
-		v1.GET("/books_batch", controller.BookBatch)
-		//v1.GET("/books", controller.BooksAll)
-		//v1.GET("/books/:id", controller.BooksGet)
+		ginhelper.BindRouter(v1, "/posts", &controller.PostView{}, &controller.PostView{}, ginhelper.ReadOnly...)
+		v1.GET("/posts/:id/comments", ginerr.CreateGinController(controller.GetPostComments))
 	}
 
 	auth := v1.Group("", middleware.Auth)
 
 	{
 		auth.GET("/me", controller.Me)
+		auth.POST("/posts", ginerr.CreateGinController(controller.CreatePost))
+		auth.POST("/comments", ginerr.CreateGinController(controller.CreateComment))
 	}
 
 	return r

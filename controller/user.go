@@ -1,19 +1,16 @@
 package controller
 
 import (
-	"fmt"
-	"github.com/VividCortex/mysqlerr"
 	"github.com/gin-gonic/gin"
-	"github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/gorm"
 	"github.com/zcong1993/libgo/gin/ginerr"
 	"github.com/zcong1993/libgo/gin/ginhelper"
 	"github.com/zcong1993/libgo/utils"
 	"github.com/zcong1993/libgo/validator"
 	"github.com/zcong1993/rest-go/common"
+	"github.com/zcong1993/rest-go/db"
 	"github.com/zcong1993/rest-go/model"
-	mysql2 "github.com/zcong1993/rest-go/mysql"
 	"github.com/zcong1993/rest-go/service"
+	utils2 "github.com/zcong1993/rest-go/utils"
 	"net/http"
 )
 
@@ -34,15 +31,16 @@ func Register(c *gin.Context) ginerr.ApiError {
 		return common.CreateInvalidErr(validator.NormalizeErr(err))
 	}
 
-	u := &model.User{
-		Username: f.Username,
-		Email:    f.Email,
-		Password: f.Password,
+	u := &model.User{}
+	ginhelper.MustCopy(u, &f)
+
+	if u.Avatar == "" {
+		u.Avatar = utils2.GenerateAvatar(u.Name)
 	}
 
-	err = u.Save()
+	err = db.ORM.Create(u).Error
 	if err != nil {
-		if err, ok := err.(*mysql.MySQLError); ok && err.Number == mysqlerr.ER_DUP_ENTRY {
+		if utils2.IsDuplicateError(err) {
 			return common.DUPLICATE_USER
 		}
 		return common.INTERVAL_ERROR
@@ -58,6 +56,16 @@ func Register(c *gin.Context) ginerr.ApiError {
 	return nil
 }
 
+// Login is handler for /login
+// @Summary Login a user
+// @Description Login a user
+// @Accept  json
+// @Produce  json
+// @Param   user     body    common.LoginForm     true        "Login user"
+// @Success 201 {object} model.Token
+// @Failure 400 {object} common.ErrResp
+// @Failure 500 "StatusInternalServerError"
+// @Router /login [post]
 func Login(c *gin.Context) ginerr.ApiError {
 	var f common.LoginForm
 	err := c.ShouldBindJSON(&f)
@@ -65,7 +73,7 @@ func Login(c *gin.Context) ginerr.ApiError {
 		return common.CreateInvalidErr(validator.NormalizeErr(err))
 	}
 	var u model.User
-	err = mysql2.DB.First(&u, "email=?", f.Email).Error
+	err = db.ORM.First(&u, "email=?", f.Email).Error
 	if err != nil {
 		if err.Error() == "record not found" {
 			return common.INVALID_USERNAME_OR_PASSWORD
@@ -110,32 +118,6 @@ func Me(c *gin.Context) {
 	c.JSON(http.StatusOK, vv)
 }
 
-// Users query by id for /users/:id
-// @Summary Users query by id
-// @Description
-// @Accept  json
-// @Produce  json
-// @Param   id  path  string  true  "User id"
-// @Success 200 {object} model.User
-// @Failure 500 "StatusInternalServerError"
-// @Router /users/{id} [get]
-func UsersGet(c *gin.Context) {
-	id := c.Param("id")
-	var user model.User
-	err := mysql2.DB.First(&user, "id = ?", id).Error
-
-	if err != nil {
-		if gorm.IsRecordNotFoundError(err) {
-			c.Status(http.StatusNotFound)
-			return
-		}
-		c.Status(http.StatusInternalServerError)
-		return
-	}
-	ginhelper.WithCacheControl(c, common.LONG_CACHE_DURATION)
-	c.JSON(http.StatusOK, user)
-}
-
 func userToDataLoaderResp(keys []string, data []model.User) []*model.User {
 	l := len(keys)
 
@@ -143,7 +125,7 @@ func userToDataLoaderResp(keys []string, data []model.User) []*model.User {
 	resp := make([]*model.User, l)
 
 	for _, v := range data {
-		tmpMap[fmt.Sprintf("%d", v.ID)] = v
+		tmpMap[v.ID] = v
 	}
 
 	for i, key := range keys {
@@ -171,7 +153,7 @@ func UsersBatch(ctx *gin.Context) {
 	}
 
 	var users []model.User
-	err := mysql2.DB.Where("id in (?)", ids).Find(&users).Error
+	err := db.ORM.Where("id in (?)", ids).Find(&users).Error
 	if err != nil {
 		ctx.Status(http.StatusInternalServerError)
 		return

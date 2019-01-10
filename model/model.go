@@ -1,8 +1,8 @@
 package model
 
 import (
+	"github.com/jinzhu/gorm"
 	"github.com/zcong1993/libgo/utils"
-	"github.com/zcong1993/rest-go/mysql"
 	utils2 "github.com/zcong1993/rest-go/utils"
 	"time"
 )
@@ -12,38 +12,56 @@ var (
 	TOKEN_EXPIRE = time.Hour * 24 * 3
 )
 
-// User is user model
-type User struct {
-	Model
-	Username string `json:"username" gorm:"type:varchar(150);unique_index;not null"`
-	Password string `json:"-" gorm:"type:varchar(150);not null"`
-	Email    string `json:"email" gorm:"type:varchar(100);unique_index;not null"`
+type Model struct {
+	ID        string `gorm:"primary_key;type:uuid;default:uuid_generate_v4()"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt *time.Time `sql:"index"`
 }
 
-func (u *User) Save() error {
-	u.Password = utils.HashPassword(u.Password)
-	return mysql.DB.Create(u).Error
+type User struct {
+	Model
+	Name     string `json:"name" gorm:"type:varchar(150);unique_index;not null"`
+	Password string `json:"-" gorm:"type:varchar(150);not null"`
+	Email    string `json:"email" gorm:"type:varchar(100);unique_index;not null"`
+	Avatar   string `json:"avator" gorm:"type:varchar(100)"`
+}
+
+func (u *User) AfterCreate(tx *gorm.DB) (err error) {
+	tx.Model(u).Update("password", utils.HashPassword(u.Password))
+	return
 }
 
 type Token struct {
 	Model
 	User   *User  `json:"-"`
-	UserID uint   `json:"user_id"`
+	UserID string `json:"user_id"`
 	Token  string `json:"token" gorm:"type:varchar(100);index;not null"`
+}
+
+func (t *Token) AfterCreate(tx *gorm.DB) (err error) {
+	tx.Model(t).Update("token", utils2.GenerateToken())
+	return
 }
 
 func (t *Token) IsExpired() bool {
 	return time.Now().Sub(t.UpdatedAt) > TOKEN_EXPIRE
 }
 
-func (t *Token) Refresh() error {
-	return mysql.DB.Model(t).Update("token", utils2.GenerateToken()).Error
+type Post struct {
+	Model
+	Title    string    `json:"title" gorm:"type:varchar(150);index;not null"`
+	Content  string    `json:"content" gorm:"type:text"`
+	Author   *User     `json:"-" gorm:"foreignkey:AuthorID"`
+	AuthorID string    `json:"author_id"`
+	Comments []Comment `json:"comments"`
 }
 
-type Book struct {
+type Comment struct {
 	Model
-	Title    string  `json:"title" gorm:"type:varchar(150);unique_index;not null"`
-	Price    float64 `json:"price" gorm:"not null"`
-	Author   *User   `json:"-" gorm:"foreignkey:AuthorID"`
-	AuthorID uint    `json:"author_id"`
+	Content  string `json:"content" gorm:"type:text"`
+	Author   *User  `json:"-" gorm:"foreignkey:AuthorID"`
+	AuthorID string `json:"author_id"`
+	Post     *Post  `json:"-"`
+	PostID   string `json:"post_id"`
 }

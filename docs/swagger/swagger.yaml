@@ -1,5 +1,15 @@
 basePath: /v1
 definitions:
+  common.CommentInput:
+    properties:
+      content:
+        type: string
+      post_id:
+        type: string
+    required:
+    - content
+    - post_id
+    type: object
   common.ErrResp:
     properties:
       code:
@@ -9,57 +19,109 @@ definitions:
       message:
         type: string
     type: object
-  common.RegisterForm:
+  common.LoginForm:
     properties:
       email:
         type: string
       password:
         type: string
-      username:
-        type: string
     required:
-    - password
     - email
+    - password
     type: object
-  model.Book:
+  common.PostInput:
     properties:
-      author_id:
-        type: integer
-      created_at:
+      content:
         type: string
-      id:
-        type: integer
-      price:
-        type: number
       title:
         type: string
-      updated_at:
+    required:
+    - title
+    - content
+    type: object
+  common.RegisterForm:
+    properties:
+      avatar:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - name
+    - email
+    - password
+    type: object
+  model.Comment:
+    properties:
+      author_id:
+        type: string
+      content:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      id:
+        type: string
+      post_id:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  model.Post:
+    properties:
+      author_id:
+        type: string
+      comments:
+        items:
+          $ref: '#/definitions/model.Comment'
+        type: array
+      content:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+      updatedAt:
         type: string
     type: object
   model.Token:
     properties:
-      created_at:
+      createdAt:
+        type: string
+      deletedAt:
         type: string
       id:
-        type: integer
+        type: string
       token:
         type: string
-      updated_at:
+      updatedAt:
         type: string
       user_id:
-        type: integer
+        type: string
     type: object
   model.User:
     properties:
-      created_at:
+      avator:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
         type: string
       email:
         type: string
       id:
-        type: integer
-      updated_at:
         type: string
-      username:
+      name:
+        type: string
+      updatedAt:
         type: string
     type: object
 host: localhost:8080
@@ -71,54 +133,66 @@ info:
   title: Backend API
   version: "0.1"
 paths:
-  /books:
-    get:
+  /comments:
+    post:
       consumes:
       - application/json
+      description: Create a new comment
       parameters:
-      - default: 100
-        description: limit
-        in: query
-        name: limit
-        type: integer
-      - default: 0
-        description: offset
-        in: query
-        name: offset
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/model.Book'
-            type: array
-        "500":
-          description: StatusInternalServerError
-      summary: Books pagination query all
-  /books/{id}:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: Book id
-        in: path
-        name: id
+      - description: Post comment
+        in: body
+        name: post
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/common.CommentInput'
+          type: object
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
-            $ref: '#/definitions/model.Book'
+            $ref: '#/definitions/model.Comment'
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrResp'
             type: object
         "500":
           description: StatusInternalServerError
-      summary: Books query by id
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new comment
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Login a user
+      parameters:
+      - description: Login user
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/common.LoginForm'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Token'
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrResp'
+            type: object
+        "500":
+          description: StatusInternalServerError
+      summary: Login a user
   /me:
     get:
       consumes:
@@ -141,7 +215,7 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Me message
-  /p:
+  /posts:
     get:
       consumes:
       - application/json
@@ -163,11 +237,92 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/model.User'
+              $ref: '#/definitions/model.Post'
             type: array
         "500":
           description: StatusInternalServerError
-      summary: Test pagination
+      summary: Posts pagination query all
+    post:
+      consumes:
+      - application/json
+      description: Register a new user
+      parameters:
+      - description: Post content
+        in: body
+        name: post
+        required: true
+        schema:
+          $ref: '#/definitions/common.PostInput'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Post'
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrResp'
+            type: object
+        "500":
+          description: StatusInternalServerError
+      security:
+      - ApiKeyAuth: []
+      summary: Register a new user
+  /posts/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Post id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Post'
+            type: object
+        "500":
+          description: StatusInternalServerError
+      summary: Posts query by id
+  /posts/{id}/comments:
+    get:
+      consumes:
+      - application/json
+      description: Get a post's comments
+      parameters:
+      - description: Post id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Comment'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrResp'
+            type: object
+        "500":
+          description: StatusInternalServerError
+      security:
+      - ApiKeyAuth: []
+      summary: Get a post's comments
   /register:
     post:
       consumes:
@@ -197,27 +352,6 @@ paths:
         "500":
           description: StatusInternalServerError
       summary: Register a new user
-  /users/{id}:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: User id
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.User'
-            type: object
-        "500":
-          description: StatusInternalServerError
-      summary: Users query by id
 securityDefinitions:
   ApiKeyAuth:
     in: header
