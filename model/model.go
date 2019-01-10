@@ -24,7 +24,7 @@ type User struct {
 	Name     string `json:"name" gorm:"type:varchar(150);unique_index;not null"`
 	Password string `json:"-" gorm:"type:varchar(150);not null"`
 	Email    string `json:"email" gorm:"type:varchar(100);unique_index;not null"`
-	Avatar   string `json:"avator" gorm:"type:varchar(100)"`
+	Avatar   string `json:"avatar" gorm:"type:varchar(100)"`
 }
 
 func (u *User) AfterCreate(tx *gorm.DB) (err error) {
