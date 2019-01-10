@@ -1,11 +1,10 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/zcong1993/libgo/gin/ginhelper"
-	"github.com/zcong1993/libgo/reflect"
-	utils2 "github.com/zcong1993/libgo/utils"
 	"github.com/zcong1993/rest-go/model"
 	"github.com/zcong1993/rest-go/mysql"
 	"github.com/zcong1993/rest-go/utils"
@@ -80,6 +79,28 @@ func DocsBookRetrieve() {
 
 }
 
+func BookToDataLoaderResp(keys []string, data []model.Book) []*model.Book {
+	l := len(keys)
+
+	tmpMap := make(map[string]model.Book, l)
+	resp := make([]*model.Book, l)
+
+	for _, v := range data {
+		tmpMap[fmt.Sprintf("%d", v.ID)] = v
+	}
+
+	for i, key := range keys {
+		d, ok := tmpMap[key]
+		if ok {
+			resp[i] = &d
+		} else {
+			resp[i] = nil
+		}
+	}
+
+	return resp
+}
+
 func BookBatch(ctx *gin.Context) {
 	batchIds := ctx.Query("ids")
 	if batchIds == "" {
@@ -99,17 +120,7 @@ func BookBatch(ctx *gin.Context) {
 		return
 	}
 
-	dataMap := reflecthelper.Slice2Map(books, "ID")
-	res := make(map[string]interface{}, len(ids))
-
-	for _, id := range ids {
-		b, ok := dataMap[uint(utils2.Str2uint64(id))]
-		if !ok {
-			res[id] = nil
-			continue
-		}
-		res[id] = b
-	}
+	res := BookToDataLoaderResp(ids, books)
 
 	ctx.JSON(http.StatusOK, res)
 }

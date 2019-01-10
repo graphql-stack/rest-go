@@ -4,7 +4,6 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"github.com/jinzhu/gorm"
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"github.com/zcong1993/libgo/gin/ginerr"
@@ -14,18 +13,8 @@ import (
 	"github.com/zcong1993/rest-go/controller"
 	_ "github.com/zcong1993/rest-go/docs"
 	"github.com/zcong1993/rest-go/middleware"
-	"github.com/zcong1993/rest-go/model"
-	"github.com/zcong1993/rest-go/mysql"
 	"os"
 )
-
-func init() {
-	mysql.InitDB(func(db *gorm.DB) {
-		db.AutoMigrate(new(model.User))
-		db.AutoMigrate(new(model.Token))
-		db.AutoMigrate(new(model.Book))
-	})
-}
 
 func corsConfig() cors.Config {
 	c := cors.DefaultConfig()
@@ -61,6 +50,7 @@ func createGinEngine() *gin.Engine {
 		v1.POST("/login", ginerr.CreateGinController(controller.Login))
 		v1.GET("/p", controller.Test)
 		v1.GET("/users/:id", controller.UsersGet)
+		v1.GET("/users_batch", controller.UsersBatch)
 	}
 
 	{

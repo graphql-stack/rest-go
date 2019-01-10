@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/VividCortex/mysqlerr"
 	"github.com/gin-gonic/gin"
 	"github.com/go-sql-driver/mysql"
@@ -133,4 +134,48 @@ func UsersGet(c *gin.Context) {
 	}
 	ginhelper.WithCacheControl(c, common.LONG_CACHE_DURATION)
 	c.JSON(http.StatusOK, user)
+}
+
+func userToDataLoaderResp(keys []string, data []model.User) []*model.User {
+	l := len(keys)
+
+	tmpMap := make(map[string]model.User, l)
+	resp := make([]*model.User, l)
+
+	for _, v := range data {
+		tmpMap[fmt.Sprintf("%d", v.ID)] = v
+	}
+
+	for i, key := range keys {
+		d, ok := tmpMap[key]
+		if ok {
+			resp[i] = &d
+		} else {
+			resp[i] = nil
+		}
+	}
+
+	return resp
+}
+
+func UsersBatch(ctx *gin.Context) {
+	batchIds := ctx.Query("ids")
+	if batchIds == "" {
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+	ids, ok := ginhelper.NormalizeBatchQuery(batchIds)
+	if !ok {
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+
+	var users []model.User
+	err := mysql2.DB.Where("id in (?)", ids).Find(&users).Error
+	if err != nil {
+		ctx.Status(http.StatusInternalServerError)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, userToDataLoaderResp(ids, users))
 }
